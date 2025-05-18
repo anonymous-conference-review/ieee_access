@@ -1,8 +1,6 @@
 # Unit-Centric Regularization for Efficient Deep Neural Networks
 
-This repository contains the official codebase for the article **"Unit-Centric Regularization for Efficient Deep Neural Networks"**, exploring a novel method for pruning redundant units by regularizing individual units instead of weights or layers.
-
-The implementation supports a wide range of experiments, including those on UCI datasets and large-scale benchmarks like ImageNet, with built-in support for **WandB logging**, **visual diagnostics**, and **automatic sweep configuration**.
+This repository contains the official codebase for the article **"Unit-Centric Regularization for Efficient Deep Neural Networks"**, exploring a novel method for enforcing unit and data point utilization in deep neural networks.
 
 ---
 
@@ -11,7 +9,8 @@ The implementation supports a wide range of experiments, including those on UCI 
 This repository provides the official implementation of **"Unit-Centric Regularization for Efficient Deep Neural Networks"**, including code to reproduce all experiments presented in the paper. Key components include:
 
 - **Jumpstart Regularization Implementation**  
-  The core method—Jumpstart Regularization—is implemented in [`jumpstart/jumpstart.py`](jumpstart/jumpstart.py), providing unit-level regularization to encourage sparsity and improve network efficiency.
+  The core method—Jumpstart Regularization—is implemented in [`jumpstart/jumpstart.py`](jumpstart/jumpstart.py), providing a principled regularization approach that enforces both unit and data point non-linear behavior.
+
 
 - **Experiment Scripts**  
   Experiments can be launched using:
