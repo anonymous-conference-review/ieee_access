@@ -2,15 +2,12 @@
 
 This repository contains the official codebase for the article **"Unit-Centric Regularization for Efficient Deep Neural Networks"**, exploring a novel method for enforcing unit and data point utilization in deep neural networks.
 
----
-
 ## Overview
 
 This repository provides the official implementation of **"Unit-Centric Regularization for Efficient Deep Neural Networks"**, including code to reproduce all experiments presented in the paper. Key components include:
 
 - **Jumpstart Regularization Implementation**  
   The core method—Jumpstart Regularization—is implemented in [`jumpstart/jumpstart.py`](jumpstart/jumpstart.py), providing a principled regularization approach that enforces both unit and data point non-linear behavior.
-
 
 - **Experiment Scripts**  
   Experiments can be launched using:
@@ -20,6 +17,85 @@ This repository provides the official implementation of **"Unit-Centric Regulari
 - **Testing Suite**  
   Comprehensive unit tests are provided in the [`test/`](test/) directory to ensure the correctness of metrics, callbacks, models, and training logic. Plotting output and visual diagnostics are also validated with static test resources.
 
+
+## Pseudocode for Jumpstart Regularization Loss
+
+This section presents pseudocode for the **Jumpstart Regularization loss**, which imposes constraints on the *preactivation values from each layer*. These preactivations—i.e., the inputs to the activation functions—are collected during a forward pass and used to define penalties that promote the presence of both strong positive and negative signals in the network.
+
+Each preactivation tensor is assumed to have shape:
+
+```
+(batch size, number of units) plus (width, height) if applicable.
+```
+
+- For fully connected layers, the spatial dimensions may be omitted or set to 1.
+- For convolutional layers, they reflect the spatial layout of the feature maps.
+
+### Key Concepts
+
+The method operates on each tensor and computes constraints along two structural dimensions:
+
+- **Unit-wise**: across samples or spatial positions, for each individual neuron or channel.
+- **Point-wise**: across all neurons or channels, at a specific input location or sample.
+
+Two constraints are applied:
+
+- **Positive constraint**: penalizes preactivations whose maximum value is less than 1, using  
+  `ReLU(1 - max)`
+
+- **Negative constraint**: penalizes preactivations whose minimum value is greater than -1, using  
+  `ReLU(1 + min)`
+
+These penalties are computed across all layers, combined, and aggregated into a final regularization term that is added to the training objective.
+
+---
+
+### Jumpstart Regularization Loss (Pseudocode)
+
+```text
+Function JumpstartRegularizationLoss(activations A):
+    Initialize unit_losses, point_losses
+
+    For each preactivation tensor a in A:
+        For mode in [unit-wise, point-wise]:
+            max_a ← ComputeMax(a, mode)
+            min_a ← ComputeMin(a, mode)
+
+            pos_loss ← ReLU(1 - max_a)
+            neg_loss ← ReLU(1 + min_a)
+            loss ← pos_loss + neg_loss
+
+            If mode == unit-wise:
+                unit_losses.append(loss)
+            Else:
+                point_losses.append(loss)
+
+    U ← Concat(unit_losses)
+    P ← Concat(point_losses)
+
+    Return Aggregate(U, P)
+```
+
+---
+
+### Supporting Procedures
+
+```text
+Function ComputeMax(a, mode):
+    Reduce tensor a using max over all dimensions except the one corresponding to mode
+    Return reduced vector of maxima
+```
+
+```text
+Function ComputeMin(a, mode):
+    Reduce tensor a using min over all dimensions except the one corresponding to mode
+    Return reduced vector of minima
+```
+
+```text
+Function Aggregate(U, P):
+    Return mean(U) + mean(P)
+```
 
 ---
 
@@ -206,3 +282,4 @@ pytest test/
 ```
 
 This will execute all tests in the `test/` directory and report the results. Tests include unit tests for the Jumpstart Regularization implementation, metrics, callbacks, and plotting functions. The tests are designed to ensure the correctness of the code and the expected behavior of the implemented features.
+
