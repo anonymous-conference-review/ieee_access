@@ -66,10 +66,3 @@ Input → Linear(4) → ReLU → Linear(4) → ... → Linear(D_out)
 | `resnet50_architecture_width1.5.svg` | ResNet-50 with width multiplier 1.5 |
 | `bottleneck_block.svg` | Visual layout of the Bottleneck block |
 | `dense_network_50x4.svg` | Dense 50-layer network architecture |
-
----
-
-## 📎 Notes
-
-- Diagrams use modern, dark-themed SVGs for clarity.
-- Can be previewed natively on GitHub or rendered in Markdown viewers.
